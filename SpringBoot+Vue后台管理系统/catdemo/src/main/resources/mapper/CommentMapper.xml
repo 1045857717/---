@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springboot.catdemo.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.springboot.catdemo.entity.Comment">
+
+    </resultMap>
+
+    <select id="selectCommentDetail" resultMap="selectCommentDetailChildren">
+        SELECT c1.id,
+               c1.comment_content,
+               c1.comment_time,
+               c1.reply_name,
+               c1.user_id,
+               c1.article_id,
+               c1.pid,
+               c1.original_id,
+               su1.username,
+               su1.nickname,
+               su1.gender,
+               su1.email,
+               su1.phone,
+               su1.avatar_url,
+               c2.id              as id2,
+               c2.comment_content as comment_content2,
+               c2.comment_time    as comment_time2,
+               c2.reply_name      as reply_name2,
+               c2.user_id         as user_id2,
+               c2.article_id      as article_id2,
+               c2.pid             as pid2,
+               c2.original_id     as original_id2,
+               su2.username       as username2,
+               su2.nickname       as nickname2,
+               su2.gender         as gender2,
+               su2.email          as email2,
+               su2.phone          as phone2,
+               su2.avatar_url     as avatar_url2
+        FROM cat_comment c1
+                 LEFT JOIN cat_comment as c2 ON c1.id = c2.original_id
+                 LEFT JOIN sys_user su1 on c1.user_id = su1.id
+                 LEFT JOIN sys_user su2 on c2.user_id = su2.id
+        WHERE c1.pid is null
+          AND c1.article_id = #{articleId}
+        order by c1.id desc;
+    </select>
+
+    <!--    文章评论列表(分页)-->
+    <select id="selectPageCommentDetail" resultMap="selectCommentDetailChildren">
+        SELECT c1.id,
+               c1.comment_content,
+               c1.comment_time,
+               c1.reply_name,
+               c1.user_id,
+               c1.article_id,
+               c1.pid,
+               c1.original_id,
+               su1.username,
+               su1.nickname,
+               su1.gender,
+               su1.email,
+               su1.phone,
+               su1.avatar_url,
+               c2.id              as id2,
+               c2.comment_content as comment_content2,
+               c2.comment_time    as comment_time2,
+               c2.reply_name      as reply_name2,
+               c2.user_id         as user_id2,
+               c2.article_id      as article_id2,
+               c2.pid             as pid2,
+               c2.original_id     as original_id2,
+               su2.username       as username2,
+               su2.nickname       as nickname2,
+               su2.gender         as gender2,
+               su2.email          as email2,
+               su2.phone          as phone2,
+               su2.avatar_url     as avatar_url2
+        FROM cat_comment as c1
+                 LEFT JOIN cat_comment as c2 ON c1.id = c2.original_id
+                 LEFT JOIN sys_user as su1 on c1.user_id = su1.id
+                 LEFT JOIN sys_user as su2 on c2.user_id = su2.id
+        WHERE c1.pid is null
+          AND c1.article_id = #{params.articleId}
+        ORDER BY c1.id desc
+        LIMIT #{params.pageNum},#{params.pageSize}
+    </select>
+
+    <!--    查询所有的最上级评论-->
+    <select id="selectParentCommentDetail" resultType="com.springboot.catdemo.entity.Comment">
+        SELECT c1.id,
+               c1.comment_content,
+               c1.comment_time,
+               c1.reply_name,
+               c1.user_id,
+               c1.article_id,
+               c1.pid,
+               c1.original_id,
+               su.username,
+               su.nickname,
+               su.gender,
+               su.email,
+               su.phone,
+               su.avatar_url
+        FROM cat_comment as c1
+                 LEFT JOIN sys_user su on c1.user_id = su.id
+        WHERE c1.pid is null
+          AND article_id = #{articleId}
+        ORDER BY c1.id DESC
+    </select>
+
+    <!--    查询最上级的子级评论 -->
+    <select id="selectChildrenCommentsDetail" resultType="com.springboot.catdemo.entity.Comment">
+        SELECT c1.id,
+               c1.comment_content,
+               c1.comment_time,
+               c1.reply_name,
+               c1.user_id,
+               c1.article_id,
+               c1.pid,
+               c1.original_id,
+               su.username,
+               su.nickname,
+               su.gender,
+               su.email,
+               su.phone,
+               su.avatar_url
+        FROM cat_comment as c1
+                 LEFT JOIN sys_user su on c1.user_id = su.id
+        WHERE c1.pid is not null
+          AND original_id = #{id}
+    </select>
+
+    <resultMap type="com.springboot.catdemo.entity.Comment" id="selectCommentDetailChildren">
+        <!--id:指定查询列表唯一标识，如果有多个唯一标识，则配置多个id
+        column:数据库对应的列
+        property:实体类对应的属性名 -->
+        <id column="id" property="id"/>
+        <result column="comment_content" property="commentContent"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="reply_name" property="replyName"/>
+        <result column="user_id" property="userId"/>
+        <result column="article_id" property="articleId"/>
+        <result column="pid" property="pid"/>
+        <result column="original_id" property="originalId"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <!--
+        property:实体类中定义的属性名
+        ofType：指定映射到集合中的全类名
+        -->
+        <collection property="childrenComments" javaType="ArrayList" ofType="com.springboot.catdemo.entity.Comment">
+            <id column="id2" property="id"/>
+            <result column="comment_content2" property="commentContent"/>
+            <result column="comment_time2" property="commentTime"/>
+            <result column="reply_name2" property="replyName"/>
+            <result column="user_id2" property="userId"/>
+            <result column="article_id2" property="articleId"/>
+            <result column="pid2" property="pid"/>
+            <result column="original_id2" property="originalId"/>
+            <result column="username2" property="username"/>
+            <result column="nickname2" property="nickname"/>
+            <result column="gender2" property="gender"/>
+            <result column="email2" property="email"/>
+            <result column="phone2" property="phone"/>
+            <result column="avatar_url2" property="avatarUrl"/>
+        </collection>
+    </resultMap>
+</mapper>

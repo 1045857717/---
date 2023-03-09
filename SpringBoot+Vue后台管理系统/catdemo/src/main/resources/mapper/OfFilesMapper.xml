@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springboot.catdemo.mapper.OfFilesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.springboot.catdemo.entity.OfFiles">
+        <id column="id" property="id" />
+        <result column="file_name" property="fileName" />
+        <result column="file_type" property="fileType" />
+        <result column="file_rank" property="fileRank" />
+        <result column="file_size" property="fileSize" />
+        <result column="file_url" property="fileUrl" />
+        <result column="file_md5" property="fileMd5" />
+        <result column="is_delete" property="isDelete" />
+        <result column="enable" property="enable" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, file_name, file_type, file_rank, file_size, file_url, file_md5, is_delete, enable
+    </sql>
+
+</mapper>

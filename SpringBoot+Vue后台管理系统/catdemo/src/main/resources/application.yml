@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    # -Djasypt.encryptor.password=1045857717@qq.com
+#    active: dev
+    active: test

@@ -1,0 +1,80 @@
+server:
+  # 生产环境
+  port: 443
+  ssl:
+    # server.ssl.key-store = classpath:<domain_name.pfx>   #您需要使用实际的证书名称替换domain_name.pfx。
+    key-store: classpath:9320356_hy-can.love.pfx
+    # key-password: HJ4B9SNF
+    # server.ssl.key-store-password = ********    #填写pfx-password.txt文件内的密码。
+    key-store-password: 2ptavxud
+    # server.ssl.keyStoreType = PKCS12
+    key-store-type: PKCS12
+  tomcat:
+    remoteip:
+      protocol-header-https-value: https
+      remote-ip-header: X-Forwarded-For
+      protocol-header: X-Forwarded-Proto
+  servlet:
+    session:
+      cookie:
+        # 当设置为true时，表示创建的 Cookie 会被以安全的形式向服务器传输，也就是只能在 HTTPS 连接中被浏览器传递到服务器端进行会话验证，如果是 HTTP 连接则不会传递该信息，所以不会被窃取到Cookie 的具体内容。
+        secure: true
+        # 如果在Cookie中设置了"HttpOnly"属性，那么通过程序(JS脚本、Applet等)将无法读取到Cookie信息，这样能有效的防止XSS攻击
+        http-only: true
+# 部署时 java -jar -Djasypt.encryptor.password=盐值 xxx.jar
+#jasypt:
+#  encryptor:
+#    # 用来加解密的salt值
+#    password: 1045857717@qq.com
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/catdemo?serverTimezone=GMT%2b8
+    username: ENC(8NGJQl2NZuMZVnZlhShn5vXp+ga52eH5HiKy4vs5mBvxyj2T+HI8c9SMTEEQnjB7)
+    password: ENC(+qVLHIJn23d/c6fWt985CL9PDBVw351INLrrylpFfXHOX87RPgcSHd4pbxiZ6oy8)
+  servlet:
+    multipart:
+      max-file-size: 100MB # 设置单个文件的大小
+      max-request-size: 100MB # 设置单次请求的文件的总大小
+  redis:
+    host: localhost
+    port: 6379
+  web:
+    resources:
+      # 放行静态文件
+      static-locations: classpath:/static/
+
+mybatis:
+  #如果mapper类和mapper.xml不在同一个路径下时，mapper-locations就有用了
+  #classpath代表resources 如果在classpath后从 / 开始 就代表从catdemo开始找了
+  mapper-locations: classpath:mapper/*.xml  #扫描所有mybaits的xml文件
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+mybatis-plus:
+  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # Slf4结合mybatis-plus的配置
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+
+
+# path上传文件的路径
+files:
+  upload:
+    cat:
+      path: F:\个人项目\SpringBoot+Vue后台管理系统\files\cat\
+    path: F:\个人项目\SpringBoot+Vue后台管理系统\files\
+    avatar:
+      path: F:\个人项目\SpringBoot+Vue后台管理系统\vue\public\userAvatar\
+
+# 微信接口文件位置
+wx:
+  upload:
+    # 微信首页九宫格菜单图标
+    menuIcon:
+      path: F:\个人项目\SpringBoot+Vue后台管理系统\files\wx\menuIcon\
+
+# 拼图验证码静态文件位置
+static:
+  captchaImage:
+    path: static\captchaImage

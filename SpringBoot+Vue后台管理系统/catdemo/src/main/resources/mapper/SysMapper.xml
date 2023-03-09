@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springboot.catdemo.mapper.SysMapper">
+
+    <select id="selectProvinceAll" resultMap="selectCommentDetailChildren">
+        SELECT
+            p.code pcode,
+            p.name pname,
+            c.`code` ccode,
+            c.`name` cname,
+            c.provinceCode cprovinceCode,
+            a.`code` acode,
+            a.`name` aname,
+            a.cityCode acityCode,
+            a.provinceCode aprovinceCode
+        FROM
+            sys_provinces p
+                LEFT JOIN sys_cities c ON p.code = c.provinceCode
+                LEFT JOIN sys_areas a ON a.cityCode = c.`code`
+    </select>
+
+    <select id="selectProvince" resultType="com.springboot.catdemo.entity.Province">
+        SELECT
+            code as value,
+            name as label
+        FROM `sys_provinces`
+        WHERE code = #{code}
+    </select>
+
+    <select id="selectCity" resultType="com.springboot.catdemo.entity.City">
+        SELECT
+            code as value,
+            name as label,
+            provinceCode
+        FROM `sys_cities`
+        WHERE code = #{code}
+    </select>
+
+    <select id="selectArea" resultType="com.springboot.catdemo.entity.Area">
+        SELECT
+            code as value,
+            name as label,
+            cityCode,
+            provinceCode
+        FROM `sys_areas`
+        WHERE code = #{code}
+    </select>
+
+
+    <resultMap type="com.springboot.catdemo.entity.Province" id="selectCommentDetailChildren">
+        <!--id:指定查询列表唯一标识，如果有多个唯一标识，则配置多个id
+        column:数据库对应的列
+        property:实体类对应的属性名 -->
+        <id column="pcode" property="value"/>
+        <result column="pname" property="label"/>
+        <!--
+        property:实体类中定义的属性名
+        ofType：指定映射到集合中的全类名
+        -->
+        <collection property="children" javaType="ArrayList" ofType="com.springboot.catdemo.entity.City">
+            <id column="ccode" property="value"/>
+            <result column="cprovinceCode" property="cityProvinceCode"/>
+            <result column="cname" property="label"/>
+            <collection property="children" javaType="ArrayList" ofType="com.springboot.catdemo.entity.Area">
+                <id column="acode" property="value"/>
+                <result column="aname" property="label"/>
+                <result column="acityCode" property="areaCityCode"/>
+                <result column="aprovinceCode" property="areaProvinceCode"/>
+            </collection>
+        </collection>
+    </resultMap>
+</mapper>
